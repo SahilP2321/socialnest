@@ -36,6 +36,7 @@ A modern Twitter-like social media platform built with Django. Users can create 
 - **Pillow** - Image processing
 
 ## 📁 Project Structure
+
 SocialNest/
 ├── manage.py
 ├── requirements.txt
@@ -43,7 +44,8 @@ SocialNest/
 ├── README.md
 ├── tweet/
 │ ├── migrations/
-│ ├── templates/tweet/
+│ ├── templates/
+│ │ └── tweet/
 │ │ ├── tweet_list.html
 │ │ ├── tweet_form.html
 │ │ └── tweet_confirm_delete.html
@@ -117,41 +119,25 @@ Admin: http://127.0.0.1:8000/admin/
 
 📝 Usage Guide
 Register/Login to create an account
-
 Create tweets using the + button
-
 Like tweets by clicking the heart icon
-
 Edit/Delete only your own tweets
-
 Click any tweet for full-screen view
-
 Use arrow keys to navigate in full-screen
-
 🚢 Deployment (Render)
 Push code to GitHub
-
 Create Web Service on Render
-
 Connect GitHub repository
-
 Add environment variables:
-
 DEBUG=False
-
 SECRET_KEY (generate new)
-
 Deploy!
 
 🤝 Contributing
 Fork the repository
-
 Create feature branch (git checkout -b feature/AmazingFeature)
-
 Commit changes (git commit -m 'Add feature')
-
 Push to branch (git push origin feature/AmazingFeature)
-
 Open Pull Request
 
 
@@ -161,4 +147,5 @@ Sahil
 GitHub: @SahilP2321
 
 LinkedIn: www.linkedin.com/in/sahil-patil-15273a289
+
 
