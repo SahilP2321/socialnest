@@ -54,6 +54,7 @@ Tools & Libraries
 Pillow – Image processing
 
 📁 Project Structure
+'''
 SocialNest/
 ├── manage.py
 ├── requirements.txt
@@ -81,6 +82,7 @@ SocialNest/
     ├── settings.py
     ├── urls.py
     └── wsgi.py
+'''
 🚀 Live Demo
 
 Coming soon
