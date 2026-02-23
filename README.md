@@ -54,6 +54,7 @@ Tools & Libraries
 Pillow – Image processing
 
 📁 Project Structure
+'''
 SocialNest/
 ├── manage.py
 ├── requirements.txt
@@ -81,6 +82,8 @@ SocialNest/
     ├── settings.py
     ├── urls.py
     └── wsgi.py
+
+'''
 🚀 Live Demo
 
 Coming soon
@@ -191,3 +194,4 @@ Sahil Patil
 GitHub: @SahilP2321
 
 LinkedIn: www.linkedin.com/in/sahil-patil-15273a289
+
