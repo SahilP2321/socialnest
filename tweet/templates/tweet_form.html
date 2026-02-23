@@ -1,0 +1,340 @@
+{% extends "layout.html" %}
+{% block title %}Social Nest - {% if form.instance.pk %}Edit{% else %}Create{% endif %} Tweet{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Form Card -->
+            <div class="card border-0 shadow-lg hover-effect">
+                <div class="card-body p-5">
+                    <!-- Form Header with Icon -->
+                    <div class="text-center mb-5">
+                        <div class="form-icon mb-4">
+                            {% if form.instance.pk %}
+                                <i class="fas fa-edit fa-3x text-primary"></i>
+                            {% else %}
+                                <i class="fas fa-feather-alt fa-3x text-primary"></i>
+                            {% endif %}
+                        </div>
+                        <h3 class="fw-bold mb-2">
+                            {% if form.instance.pk %}
+                                Edit Tweet
+                            {% else %}
+                                Create Tweet
+                            {% endif %}
+                        </h3>
+                        <p class="text-muted">
+                            {% if form.instance.pk %}
+                                Update your tweet below
+                            {% else %}
+                                Share your thoughts with the community
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- Form -->
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Form Fields -->
+                        {% for field in form %}
+                        <div class="mb-4">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                {{ field.label }}
+                                {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                            </label>
+                            
+                            {% if field.name == 'text' %}
+                                <textarea name="{{ field.name }}" 
+                                          id="{{ field.id_for_label }}" 
+                                          class="form-control modern-input {% if field.errors %}is-invalid{% endif %}"
+                                          rows="5"
+                                          placeholder="What's on your mind?">{{ field.value|default:'' }}</textarea>
+                            
+                            {% elif field.name == 'photo' %}
+                                <div class="file-input-wrapper">
+                                    <input type="file" 
+                                           name="{{ field.name }}" 
+                                           id="{{ field.id_for_label }}" 
+                                           class="form-control modern-input {% if field.errors %}is-invalid{% endif %}"
+                                           accept="image/*"
+                                           onchange="previewImage(this)">
+                                    <div class="file-input-preview mt-3" id="imagePreview">
+                                        {% if field.value %}
+                                        <div class="current-image p-3 border rounded">
+                                            <p class="small text-muted mb-2">Current image:</p>
+                                            <img src="{{ field.value.url }}" alt="Current" class="img-thumbnail rounded" style="max-height: 100px;">
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            
+                            {% else %}
+                                <input type="{{ field.field.widget.input_type }}" 
+                                       name="{{ field.name }}" 
+                                       id="{{ field.id_for_label }}" 
+                                       value="{{ field.value|default:'' }}"
+                                       class="form-control modern-input {% if field.errors %}is-invalid{% endif %}"
+                                       placeholder="Enter {{ field.label|lower }}">
+                            {% endif %}
+                            
+                            {% if field.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in field.errors %}
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 mt-5">
+                            <button type="submit" class="btn btn-primary flex-grow-1 py-3">
+                                <i class="fas {% if form.instance.pk %}fa-save{% else %}fa-paper-plane{% endif %} me-2"></i>
+                                {% if form.instance.pk %}Update Tweet{% else %}Post Tweet{% endif %}
+                            </button>
+                            <a href="{% url 'tweet_list' %}" class="btn btn-light flex-grow-1 py-3">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Back Link -->
+                    <div class="text-center mt-4">
+                        <a href="{% url 'tweet_list' %}" class="text-decoration-none text-muted">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Timeline
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="card border-0 shadow-sm mt-4 tips-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>
+                        <h6 class="fw-bold mb-0">Tips for great tweets</h6>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2 small"></i>
+                                <small>Be clear & concise</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2 small"></i>
+                                <small>Add relevant images</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2 small"></i>
+                                <small>Be respectful</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2 small"></i>
+                                <small>Share meaningfully</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Modern Form Styles */
+    .hover-effect {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 20px !important;
+    }
+    
+    .card {
+        border-radius: 20px !important;
+        overflow: hidden;
+    }
+    
+    .form-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    
+    .modern-input {
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .modern-input:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        outline: none;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 8px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-light {
+        background: #f8f9fa;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-light:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+    
+    .invalid-feedback {
+        background: #fee;
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-top: 8px;
+        color: #e53e3e;
+        font-size: 0.9rem;
+    }
+    
+    .tips-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 16px !important;
+    }
+    
+    /* Image Preview */
+    .file-input-preview {
+        border-radius: 12px;
+    }
+    
+    .current-image {
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+    
+    /* Dark Mode */
+    @media (prefers-color-scheme: dark) {
+        .card {
+            background: #1e1e1e;
+        }
+        
+        .form-label {
+            color: #e0e0e0;
+        }
+        
+        .modern-input {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+        
+        .modern-input:focus {
+            background: #2a2a2a;
+            border-color: #8a7aff;
+        }
+        
+        .modern-input::placeholder {
+            color: #666;
+        }
+        
+        .btn-light {
+            background: #333;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+        
+        .btn-light:hover {
+            background: #3a3a3a;
+        }
+        
+        .tips-card {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
+        }
+        
+        .invalid-feedback {
+            background: #442222;
+            color: #fc8181;
+        }
+        
+        .current-image {
+            background: #2a2a2a;
+        }
+        
+        .img-thumbnail {
+            background: #333;
+            border-color: #444;
+        }
+        
+        .text-muted {
+            color: #999 !important;
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 2rem !important;
+        }
+        
+        .btn {
+            padding: 0.75rem !important;
+        }
+    }
+</style>
+
+<!-- Image Preview Script -->
+<script>
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `
+                <div class="new-image p-3 border rounded">
+                    <p class="small text-muted mb-2">New image:</p>
+                    <img src="${e.target.result}" class="img-thumbnail rounded" style="max-height: 100px;">
+                </div>
+            `;
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock content %}

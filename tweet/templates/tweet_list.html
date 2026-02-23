@@ -1,0 +1,721 @@
+{% extends "layout.html" %}
+{% block title %}Social Nest - Home{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Tweets Grid -->
+    <div class="row g-4">
+        {% for tweet in tweets %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 border-0 shadow-lg hover-effect">
+                <!-- Tweet Image - Click to open full screen -->
+                {% if tweet.photo %}
+                <div class="position-relative overflow-hidden rounded-top tweet-image-container" style="height: 220px; cursor: pointer;" onclick="openFullScreen({{ forloop.counter0 }})">
+                    <img src="{{tweet.photo.url}}" 
+                         class="card-img-top w-100 h-100 object-fit-cover" 
+                         alt="Tweet by {{tweet.user.username}}"
+                         loading="lazy">
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge bg-white text-dark px-3 py-2 shadow-sm">
+                            <i class="far fa-clock me-1"></i>{{tweet.created_at|timesince}} ago
+                        </span>
+                    </div>
+                    <div class="image-overlay">
+                        <i class="fas fa-expand-alt"></i>
+                        <span>View full screen</span>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Placeholder when no image -->
+                <div class="bg-gradient-light rounded-top d-flex align-items-center justify-content-center" style="height: 220px; cursor: pointer;" onclick="openFullScreen({{ forloop.counter0 }})">
+                    <div class="text-center">
+                        <i class="fas fa-camera fa-3x text-muted mb-2"></i>
+                        <p class="text-muted small mb-0">No image</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Card Body -->
+                <div class="card-body p-4">
+                    <!-- User Info -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar-circle bg-primary text-white me-3 shadow-sm">
+                            {{tweet.user.username|first|upper}}
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0">@{{tweet.user.username}}</h6>
+                            <div class="d-flex align-items-center gap-2">
+                                <small class="text-muted">
+                                    <i class="far fa-calendar-alt me-1"></i>{{tweet.created_at|date:"M d, Y"}}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tweet Content - Click to open full screen -->
+                    <div class="tweet-content mb-4" style="cursor: pointer;" onclick="openFullScreen({{ forloop.counter0 }})">
+                        <p class="card-text">{{tweet.text}}</p>
+                    </div>
+                    
+                    <!-- Divider -->
+                    <hr class="my-3">
+                    <div class="d-flex align-items-center mb-2">
+    <!-- Like button -->
+    {% if user.is_authenticated %}
+        <form method="POST" action="{% if tweet.id in liked_tweets %}{% url 'unlike_tweet' tweet.id %}{% else %}{% url 'like_tweet' tweet.id %}{% endif %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm {% if tweet.id in liked_tweets %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                <i class="{% if tweet.id in liked_tweets %}fas{% else %}far{% endif %} fa-heart me-1"></i>
+                {{ tweet.likes.count }} Likes
+            </button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-sm btn-outline-secondary">
+            <i class="far fa-heart me-1"></i>
+            {{ tweet.likes.count }} Likes
+        </a>
+    {% endif %}
+</div>
+                    <!-- Action Buttons - Only show if user is logged in and is the tweet owner -->
+                    <div class="d-flex gap-2">
+                        {% if user.is_authenticated and user == tweet.user %}
+                            <a href="{% url 'tweet_edit' tweet.id %}" 
+                               class="btn btn-outline-primary btn-sm flex-grow-1 py-2">
+                                <i class="fas fa-edit me-2"></i>Edit
+                            </a>
+                            <a href="{% url 'tweet_delete' tweet.id %}" 
+                               class="btn btn-outline-danger btn-sm flex-grow-1 py-2"
+                               onclick="return confirm('Delete this tweet?')">
+                                <i class="fas fa-trash-alt me-2"></i>Delete
+                            </a>
+                        {% elif user.is_authenticated %}
+                            <!-- Show only view button for other users' tweets -->
+                            <button class="btn btn-outline-secondary btn-sm flex-grow-1 py-2" 
+                                    onclick="openFullScreen({{ forloop.counter0 }})">
+                                <i class="fas fa-eye me-2"></i>View
+                            </button>
+                        {% else %}
+                            <!-- Show login prompt for non-authenticated users -->
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-sm flex-grow-1 py-2">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login to interact
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Screen Modal for each tweet -->
+        <div id="fullscreen-modal-{{ forloop.counter0 }}" class="fullscreen-modal">
+            <div class="modal-close" onclick="closeFullScreen({{ forloop.counter0 }})">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="modal-nav modal-prev" onclick="navigateModal({{ forloop.counter0 }}, -1)">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <div class="modal-nav modal-next" onclick="navigateModal({{ forloop.counter0 }}, 1)">
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            
+            <div class="modal-content-wrapper">
+                {% if tweet.photo %}
+                <img src="{{tweet.photo.url}}" alt="Full screen tweet" class="modal-image">
+                {% endif %}
+                <div class="modal-details">
+                    <div class="modal-user">
+                        <div class="avatar-circle bg-primary text-white">
+                            {{tweet.user.username|first|upper}}
+                        </div>
+                        <div>
+                            <h4>@{{tweet.user.username}}</h4>
+                            <small>{{tweet.created_at|date:"F j, Y, g:i a"}}</small>
+                        </div>
+                    </div>
+                    <p class="modal-text">{{tweet.text}}</p>
+                    
+                    <!-- Modal Actions - Only show edit/delete if user is owner -->
+                    <div class="modal-actions">
+                        {% if user.is_authenticated and user == tweet.user %}
+                            <a href="{% url 'tweet_edit' tweet.id %}" class="modal-btn edit-btn">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <a href="{% url 'tweet_delete' tweet.id %}" class="modal-btn delete-btn" onclick="return confirm('Delete this tweet?')">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </a>
+                        {% elif user.is_authenticated %}
+                            <button class="modal-btn" style="background: #4a5568;" onclick="closeFullScreen({{ forloop.counter0 }})">
+                                <i class="fas fa-times"></i> Close
+                            </button>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="modal-btn" style="background: #4a5568;">
+                                <i class="fas fa-sign-in-alt"></i> Login to interact
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <!-- Empty State -->
+        <div class="col-12 text-center py-5">
+            <div class="empty-state p-5">
+                <div class="empty-state-icon mb-4">
+                    <i class="fas fa-feather-alt fa-4x text-primary"></i>
+                </div>
+                <h4 class="fw-light mb-3">No tweets yet</h4>
+                <p class="text-muted mb-4">Be the first to share your thoughts with the community!</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'tweet_create' %}" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-plus-circle me-2"></i>Create Tweet
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login to Create Tweet
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Floating Create Button - Only show if logged in -->
+    {% if user.is_authenticated %}
+    <div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1030;">
+        <a href="{% url 'tweet_create' %}" 
+           class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center"
+           style="width: 65px; height: 65px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+            <i class="fas fa-plus fa-xl"></i>
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- JavaScript for Full Screen Modal -->
+<script>
+// Store all tweet data for navigation
+const tweetModals = {{ tweets|length }};
+
+function openFullScreen(index) {
+    const modal = document.getElementById(`fullscreen-modal-${index}`);
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+    }
+}
+
+function closeFullScreen(index) {
+    const modal = document.getElementById(`fullscreen-modal-${index}`);
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
+}
+
+function navigateModal(currentIndex, direction) {
+    // Close current modal
+    closeFullScreen(currentIndex);
+    
+    // Calculate next index
+    let nextIndex = currentIndex + direction;
+    const totalTweets = {{ tweets|length }};
+    
+    // Loop around
+    if (nextIndex < 0) nextIndex = totalTweets - 1;
+    if (nextIndex >= totalTweets) nextIndex = 0;
+    
+    // Open next modal after a tiny delay
+    setTimeout(() => {
+        openFullScreen(nextIndex);
+    }, 100);
+}
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        // Find and close any open modal
+        const openModals = document.querySelectorAll('.fullscreen-modal.active');
+        openModals.forEach(modal => {
+            modal.classList.remove('active');
+        });
+        document.body.style.overflow = '';
+    }
+    
+    // Left/Right arrow navigation
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const activeModal = document.querySelector('.fullscreen-modal.active');
+        if (activeModal) {
+            const id = activeModal.id;
+            const index = parseInt(id.split('-').pop());
+            const direction = e.key === 'ArrowLeft' ? -1 : 1;
+            navigateModal(index, direction);
+        }
+    }
+});
+</script>
+
+<style>
+    /* Modern Card Styles */
+    .hover-effect {
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border-radius: 16px !important;
+        overflow: hidden;
+    }
+    
+    .hover-effect:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 30px 40px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Image overlay for full screen hint */
+    .tweet-image-container {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        color: white;
+        gap: 10px;
+    }
+    
+    .image-overlay i {
+        font-size: 2rem;
+    }
+    
+    .image-overlay span {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
+    .tweet-image-container:hover .image-overlay {
+        opacity: 1;
+    }
+    
+    .avatar-circle {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 600;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .bg-gradient-light {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    }
+    
+    .object-fit-cover {
+        object-fit: cover;
+    }
+    
+    .rounded-top {
+        border-top-left-radius: 16px !important;
+        border-top-right-radius: 16px !important;
+    }
+    
+    .card {
+        border-radius: 16px !important;
+        background: white;
+    }
+    
+    .tweet-content {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #2d3748;
+    }
+    
+    .badge {
+        font-size: 0.75rem;
+        font-weight: 500;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(5px);
+    }
+    
+    .empty-state {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 24px;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .empty-state-icon {
+        width: 100px;
+        height: 100px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    hr {
+        opacity: 0.2;
+    }
+    
+    /* Button Styles */
+    .btn-outline-primary {
+        border-width: 2px;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-primary:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: transparent;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-outline-danger {
+        border-width: 2px;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-danger:hover {
+        background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+        border-color: transparent;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(245, 101, 101, 0.4);
+    }
+    
+    .btn-outline-secondary {
+        border-width: 2px;
+        border-radius: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #4a5568;
+        border-color: #4a5568;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 12px 30px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Floating Button */
+    .rounded-circle {
+        transition: all 0.3s ease;
+    }
+    
+    .rounded-circle:hover {
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.5) !important;
+    }
+    
+    /* Full Screen Modal Styles */
+    .fullscreen-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .fullscreen-modal.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        z-index: 10000;
+    }
+    
+    .modal-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(90deg);
+    }
+    
+    .modal-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        z-index: 10000;
+    }
+    
+    .modal-nav:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-50%) scale(1.1);
+    }
+    
+    .modal-prev {
+        left: 30px;
+    }
+    
+    .modal-next {
+        right: 30px;
+    }
+    
+    .modal-content-wrapper {
+        max-width: 90%;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+    
+    .modal-image {
+        max-width: 100%;
+        max-height: 60vh;
+        object-fit: contain;
+        border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    
+    .modal-details {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        max-width: 600px;
+        width: 100%;
+    }
+    
+    .modal-user {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .modal-user .avatar-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+    
+    .modal-user h4 {
+        margin: 0;
+        color: #2d3748;
+    }
+    
+    .modal-user small {
+        color: #718096;
+    }
+    
+    .modal-text {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: #2d3748;
+        margin-bottom: 30px;
+    }
+    
+    .modal-actions {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .modal-btn {
+        flex: 1;
+        padding: 12px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .edit-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .edit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    
+    .delete-btn {
+        background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+        color: white;
+    }
+    
+    .delete-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(245, 101, 101, 0.4);
+        color: white;
+    }
+    
+    /* Dark Mode */
+    @media (prefers-color-scheme: dark) {
+        .card {
+            background: #1e1e1e;
+        }
+        
+        .card-text, h6 {
+            color: #e0e0e0;
+        }
+        
+        .text-muted {
+            color: #999 !important;
+        }
+        
+        .bg-gradient-light {
+            background: linear-gradient(135deg, #2a2a2a 0%, #333 100%);
+        }
+        
+        .badge {
+            background: rgba(30, 30, 30, 0.95) !important;
+            color: #e0e0e0 !important;
+        }
+        
+        hr {
+            border-color: #333;
+        }
+        
+        .empty-state {
+            background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
+        }
+        
+        .empty-state-icon {
+            background: #333;
+        }
+        
+        .btn-outline-primary {
+            color: #8a7aff;
+            border-color: #8a7aff;
+        }
+        
+        .btn-outline-danger {
+            color: #fc8181;
+            border-color: #fc8181;
+        }
+        
+        .btn-outline-secondary {
+            color: #a0aec0;
+            border-color: #4a5568;
+        }
+        
+        .modal-details {
+            background: #1e1e1e;
+        }
+        
+        .modal-user h4,
+        .modal-text {
+            color: #e0e0e0;
+        }
+        
+        .modal-user small {
+            color: #999;
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        
+        .modal-nav {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+        
+        .modal-prev {
+            left: 10px;
+        }
+        
+        .modal-next {
+            right: 10px;
+        }
+        
+        .modal-close {
+            top: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+        
+        .modal-details {
+            padding: 20px;
+        }
+        
+        .modal-user .avatar-circle {
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+        }
+        
+        .modal-text {
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock content %}
