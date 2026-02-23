@@ -53,22 +53,18 @@ Tools & Libraries
 
 Pillow – Image processing
 
-📁 Project Structure
-'''
-SocialNest/
 
+
+## 📁 Project Structure
+
+```
+SocialNest/
 ├── manage.py
-|
 ├── requirements.txt
-|
 ├── db.sqlite3
-|
 ├── README.md
-|
 ├── tweet/
-│   │
 │   ├── migrations/
-│   │
 │   ├── templates/
 │   │   └── tweet/
 │   │       ├── tweet_list.html
@@ -89,7 +85,9 @@ SocialNest/
     ├── settings.py
     ├── urls.py
     └── wsgi.py
-'''
+```
+
+
 🚀 Live Demo
 
 Coming soon
