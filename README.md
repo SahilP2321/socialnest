@@ -55,12 +55,19 @@ Pillow – Image processing
 
 📁 Project Structure
 SocialNest/
+
 ├── manage.py
+|
 ├── requirements.txt
+|
 ├── db.sqlite3
+|
 ├── README.md
+|
 ├── tweet/
+│   │
 │   ├── migrations/
+│   │
 │   ├── templates/
 │   │   └── tweet/
 │   │       ├── tweet_list.html
