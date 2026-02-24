@@ -1,0 +1,190 @@
+{% extends "layout.html" %}
+{% block title %}Edit Profile - SocialNest{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Your Profile</h4>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- Display success messages -->
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <!-- Display current profile photo -->
+                    <div class="text-center mb-4">
+                        {% if form.instance.profile_photo %}
+                            <img src="{{ form.instance.profile_photo.url }}" 
+                                 alt="Profile Photo" 
+                                 class="rounded-circle img-thumbnail"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                            <p class="text-muted mt-2">Current Photo</p>
+                        {% else %}
+                            <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center"
+                                 style="width: 150px; height: 150px;">
+                                <span class="display-4 text-white">{{ user.username|first|upper }}</span>
+                            </div>
+                            <p class="text-muted mt-2">No Profile Photo</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Profile Edit Form -->
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Display non-field errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Bio Field -->
+                        <div class="mb-3">
+                            <label for="{{ form.bio.id_for_label }}" class="form-label">Bio</label>
+                            <textarea name="{{ form.bio.name }}" 
+                                      id="{{ form.bio.id_for_label }}" 
+                                      class="form-control {% if form.bio.errors %}is-invalid{% endif %}"
+                                      rows="4">{% if form.bio.value %}{{ form.bio.value }}{% endif %}</textarea>
+                            
+                            {% if form.bio.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.bio.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Tell us about yourself (max 240 characters)</div>
+                        </div>
+                        
+                        <!-- Profile Photo Field -->
+                        <div class="mb-3">
+                            <label for="{{ form.profile_photo.id_for_label }}" class="form-label">Profile Photo</label>
+                            <input type="file" 
+                                   name="{{ form.profile_photo.name }}" 
+                                   id="{{ form.profile_photo.id_for_label }}"
+                                   class="form-control {% if form.profile_photo.errors %}is-invalid{% endif %}"
+                                   accept="image/*">
+                            
+                            {% if form.profile_photo.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.profile_photo.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Upload a square image for best results (JPG, PNG, GIF)</div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a href="{% url 'tweet_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add some custom styles -->
+<style>
+    .card {
+        border-radius: 15px;
+        border: none;
+    }
+    
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-outline-secondary {
+        border-radius: 10px;
+        padding: 12px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        background: #4a5568;
+        border-color: #4a5568;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e2e8f0;
+        padding: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .img-thumbnail {
+        border: 3px solid #667eea;
+        padding: 3px;
+    }
+    
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .card {
+            background: #1e1e1e;
+        }
+        
+        .form-label {
+            color: #e0e0e0;
+        }
+        
+        .form-control {
+            background: #2d2d2d;
+            border-color: #404040;
+            color: #e0e0e0;
+        }
+        
+        .form-control:focus {
+            background: #2d2d2d;
+            color: #e0e0e0;
+        }
+        
+        .form-text {
+            color: #999 !important;
+        }
+        
+        .text-muted {
+            color: #999 !important;
+        }
+    }
+</style>
+{% endblock %}

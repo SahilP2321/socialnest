@@ -8,4 +8,9 @@ urlpatterns = [
     path('register/', views.register,name="register"),
     path('like/<int:tweet_id>/', views.like_tweet, name='like_tweet'),
     path('unlike/<int:tweet_id>/', views.unlike_tweet, name='unlike_tweet'),
-] 
+    path('profile/',views.profile,name="profile"),
+    path('user/<str:username>/', views.user_profile, name='user_profile'),
+    path('retweet/<int:tweet_id>',views.retweet_tweet,name="retweet"),
+    path('unretweet/<int:tweet_id>',views.unretweet_tweet,name="unretweet"),
+
+]

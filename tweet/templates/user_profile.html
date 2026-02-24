@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+{% block title %}{{ profile_user.username }}'s Profile - SocialNest{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Profile Header -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-body text-center p-5">
+                    <!-- Profile Photo -->
+                    <div class="mb-3">
+                        {% if profile_user.profile.profile_photo %}
+                            <img src="{{ profile_user.profile.profile_photo.url }}" 
+                                 alt="{{ profile_user.username }}" 
+                                 class="rounded-circle border border-3 border-primary shadow"
+                                 style="width: 120px; height: 120px; object-fit: cover;">
+                        {% else %}
+                            <div class="avatar-circle bg-primary text-white mx-auto d-flex align-items-center justify-content-center" 
+                                 style="width: 120px; height: 120px; font-size: 3rem; border-radius: 50%;">
+                                {{ profile_user.username|first|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Username -->
+                    <h2 class="mb-2">@{{ profile_user.username }}</h2>
+                    
+                    <!-- Bio -->
+                    {% if profile_user.profile.bio %}
+                        <p class="text-muted mb-3">{{ profile_user.profile.bio }}</p>
+                    {% else %}
+                        <p class="text-muted mb-3">No bio yet.</p>
+                    {% endif %}
+                    
+                    <!-- Stats -->
+                    <div class="d-flex justify-content-center gap-4 mb-3">
+                        <div>
+                            <h5 class="mb-0">{{ tweets.count }}</h5>
+                            <small class="text-muted">Tweets</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Edit Profile Button (only if this is your profile) -->
+                    {% if user.is_authenticated and user == profile_user %}
+                        <a href="{% url 'profile' %}" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </a>
+                    {% endif %}
+                    
+                    <!-- Back to Home Button -->
+                    <a href="{% url 'tweet_list' %}" class="btn btn-outline-secondary ms-2">
+                        <i class="fas fa-home me-2"></i>Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User's Tweets -->
+    <div class="row g-4">
+        <div class="col-12">
+            <h4 class="mb-4">Tweets by @{{ profile_user.username }}</h4>
+        </div>
+        
+        {% for tweet in tweets %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 border-0 shadow-lg hover-effect">
+                <!-- Tweet Image if exists -->
+                {% if tweet.photo %}
+                <div style="height: 200px; overflow: hidden;">
+                    <img src="{{ tweet.photo.url }}" 
+                         class="card-img-top w-100 h-100" 
+                         style="object-fit: cover;"
+                         alt="Tweet image">
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <p class="card-text">{{ tweet.text }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">{{ tweet.created_at|date:"M d, Y" }}</small>
+                        <span class="text-danger">
+                            <i class="{% if tweet.id in liked_tweets %}fas{% else %}far{% endif %} fa-heart"></i>
+                            {{ tweet.likes.count }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-feather-alt fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No tweets yet.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .hover-effect {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .hover-effect:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+    }
+    
+    .avatar-circle {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style>
+{% endblock %}
