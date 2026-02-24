@@ -1,8 +1,8 @@
-SocialNest 🪹
+# SocialNest 🪹
 
 A modern Twitter-like social media platform built with Django. Users can create tweets, upload images, like posts, and interact in a beautiful dark-themed interface.
 
-✨ Features
+## ✨ Features
 Current Features ✅
 
 User Authentication – Register, login, and logout functionality
@@ -19,7 +19,7 @@ Responsive Design – Works perfectly on desktop, tablet, and mobile
 
 Dark Mode – Easy on the eyes with a modern dark theme
 
-Coming Soon 🚀
+## Coming Soon 🚀
 
 User profiles with avatars
 
@@ -29,9 +29,9 @@ Follow other users
 
 Real-time notifications
 
-🛠️ Tech Stack
+## 🛠️ Tech Stack
 
-Backend
+### Backend
 
 Django 4.2 – Python web framework
 
@@ -39,7 +39,7 @@ SQLite – Database (development)
 
 Django Authentication – User management
 
-Frontend
+### Frontend
 
 Bootstrap 5 – Responsive UI framework
 
@@ -88,15 +88,15 @@ SocialNest/
 ```
 
 
-🚀 Live Demo
+## 🚀 Live Demo
 
 Coming soon
 
-📸 Screenshots
+## 📸 Screenshots
 
 Add your screenshots here
 
-🏗️ Installation
+## 🏗️ Installation
 Prerequisites
 
 Python 3.8+
@@ -106,12 +106,12 @@ Git
 Steps
 
 Clone the repository
-
+```
 git clone https://github.com/yourusername/socialnest.git
 cd socialnest
-
+```
 Create virtual environment
-
+```
 macOS/Linux
 
 python -m venv venv
@@ -121,30 +121,30 @@ Windows
 
 python -m venv venv
 venv\Scripts\activate
-
+```
 Install dependencies
-
+```
 pip install -r requirements.txt
-
+```
 Run migrations
-
+```
 python manage.py migrate
-
+```
 Create superuser (optional)
-
+```
 python manage.py createsuperuser
-
+```
 Start server
-
+```
 python manage.py runserver
-
+```
 Open browser
 
 App: http://127.0.0.1:8000/tweet/
 
 Admin: http://127.0.0.1:8000/admin/
 
-📝 Usage Guide
+## 📝 Usage Guide
 
 Register/Login to create an account
 
@@ -158,7 +158,7 @@ Click any tweet for full-screen view
 
 Use arrow keys to navigate in full-screen
 
-🚢 Deployment (Render)
+## 🚢 Deployment (Render)
 
 Push code to GitHub
 
@@ -167,13 +167,13 @@ Create a Web Service on Render
 Connect GitHub repository
 
 Add environment variables:
-
+```
 DEBUG=False
 SECRET_KEY=<generate new secret key>
-
+```
 Deploy!
 
-🤝 Contributing
+#### 🤝 Contributing
 
 Fork the repository
 
