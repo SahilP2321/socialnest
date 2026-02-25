@@ -23,7 +23,9 @@ SECRET_KEY = 'django-insecure-nm%qdx19-%k+vi(tuunt!1htnf4%06qf1lhgv5d45)ws9@8bcb
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://socialnest-hv52.onrender.com",
+]
 
 # Application definition
 
