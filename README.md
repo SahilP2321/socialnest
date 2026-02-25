@@ -1,4 +1,4 @@
-<img width="1440" height="900" alt="Screenshot 2026-02-25 at 10 12 02 PM" src="https://github.com/user-attachments/assets/f55c3fdf-fe93-4fc0-b5eb-d47b5f615295" /><img width="1440" height="900" alt="Screenshot 2026-02-25 at 10 10 48 PM" src="https://github.com/user-attachments/assets/c2c91fd4-0fda-4905-82dd-41c6f6dacfaa" /># 🐦 SocialNest - Twitter Clone
+# 🐦 SocialNest - Twitter Clone
 
 <div align="center">
 
@@ -89,10 +89,7 @@ This project demonstrates strong understanding of:
 
 | Home Page | Tweet Modal | Profile Page |
 |:---------:|:-----------:|:------------:|
-| ![Home](<img width="1440" height="900" alt="Screenshot 2026-02-25 at 10 10 48 PM" src="https://github.com/user-attachments/assets/609adeb3-fb7e-4c72-ba21-68ecfec20204" />
-) | ![Modal](<img width="1440" height="900" alt="Screenshot 2026-02-25 at 10 12 24 PM" src="https://github.com/user-attachments/assets/fb738036-b830-42bc-8cb1-69a1ae45d5d6" />
-) | ![Profile](<img width="1440" height="900" alt="Screenshot 2026-02-25 at 10 12 02 PM" src="https://github.com/user-attachments/assets/9a5f6ea8-dbc7-422b-ae47-7c9d18cb1fc3" />
-) |
+| <img src="https://github.com/user-attachments/assets/609adeb3-fb7e-4c72-ba21-68ecfec20204" width="300"/> | <img src="https://github.com/user-attachments/assets/fb738036-b830-42bc-8cb1-69a1ae45d5d6" width="300"/> | <img src="https://github.com/user-attachments/assets/9a5f6ea8-dbc7-422b-ae47-7c9d18cb1fc3" width="300"/> |
 
 ---
 
