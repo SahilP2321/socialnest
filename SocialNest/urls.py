@@ -27,4 +27,7 @@ urlpatterns = [
     path('tweet/', include('tweet.urls')),
     path('', views.tweet_list, name='homepage'),
     path('accounts/', include('django.contrib.auth.urls')),
-] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+] # Serve media only in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
