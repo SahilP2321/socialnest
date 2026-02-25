@@ -12,5 +12,7 @@ urlpatterns = [
     path('user/<str:username>/', views.user_profile, name='user_profile'),
     path('retweet/<int:tweet_id>',views.retweet_tweet,name="retweet"),
     path('unretweet/<int:tweet_id>',views.unretweet_tweet,name="unretweet"),
+    path('follow/<str:username>',views.follow,name="follow"),
+    path('unfollow/<str:username>',views.unfollow,name="unfollow"),
 
 ]

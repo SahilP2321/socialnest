@@ -51,28 +51,32 @@
         <div class="d-flex align-items-center gap-2">
 
             {% if user.is_authenticated %}
-                <!-- PROFILE BUTTON - ADDED HERE -->
+                <!-- PROFILE BUTTON -->
                 <a href="{% url 'profile' %}" class="btn btn-outline-primary btn-sm me-2">
                     <i class="fas fa-user-circle me-1"></i>Profile
                 </a>
                 
-                <!-- User greeting with profile photo (optional) -->
-                <div class="d-flex align-items-center me-2">
-                    {% if user.profile.profile_photo %}
-                        <img src="{{ user.profile.profile_photo.url }}" 
-                             alt="Profile" 
-                             class="rounded-circle me-2"
-                             style="width: 30px; height: 30px; object-fit: cover;">
-                    {% else %}
-                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2"
-                             style="width: 30px; height: 30px;">
-                            <span class="small text-white">{{ user.username|first|upper }}</span>
-                        </div>
-                    {% endif %}
-                    <span class="text-light small">
-                        Hi, {{ user.username }}
-                    </span>
-                </div>
+                <!-- User greeting with clickable profile photo -->
+                <a href="{% url 'user_profile' user.username %}" class="text-decoration-none">
+                    <div class="d-flex align-items-center me-2">
+                        {% if user.profile.profile_photo %}
+                            <img src="{{ user.profile.profile_photo.url }}" 
+                                 alt="Profile" 
+                                 class="rounded-circle me-2"
+                                 style="width: 30px; height: 30px; object-fit: cover; cursor: pointer;"
+                                 title="View your profile">
+                        {% else %}
+                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2"
+                                 style="width: 30px; height: 30px; cursor: pointer;"
+                                 title="View your profile">
+                                <span class="small text-white">{{ user.username|first|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <span class="text-light small">
+                            Hi, {{ user.username }}
+                        </span>
+                    </div>
+                </a>
 
                 <!-- Logout button -->
                 <form method="POST" action="{% url 'logout' %}" style="display: inline;">
@@ -150,6 +154,11 @@
     .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Make the profile area have a subtle hover effect */
+    .d-flex.align-items-center:hover {
+        opacity: 0.8;
     }
     
     /* Dark mode adjustments */

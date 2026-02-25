@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 class Tweet(models.Model):
@@ -40,3 +41,16 @@ class Retweet(models.Model):
 
     def __str__(self):
         return f"{self.user.username} retweeted tweet {self.tweet.id}"
+    
+class Follow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE,related_name="following")
+    following = models.ForeignKey(User, on_delete=models.CASCADE,related_name="followers")
+    followed_at = models.DateTimeField(auto_now_add=True)
+    class meta:
+        unique_together = ['follower','following']
+        ordering = ['-followed_at']
+    def __str__(self):
+         return f"{self.follower.username} follows {self.following.username}"
+    def clean(self):
+        if self.follower == self.following:
+            raise ValidationError("You cannot follow yourself")
