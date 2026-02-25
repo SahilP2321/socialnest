@@ -1,4 +1,4 @@
-# 🐦 SocialNest - Twitter Clone
+<img width="1440" height="900" alt="Screenshot 2026-02-25 at 10 12 02 PM" src="https://github.com/user-attachments/assets/f55c3fdf-fe93-4fc0-b5eb-d47b5f615295" /><img width="1440" height="900" alt="Screenshot 2026-02-25 at 10 10 48 PM" src="https://github.com/user-attachments/assets/c2c91fd4-0fda-4905-82dd-41c6f6dacfaa" /># 🐦 SocialNest - Twitter Clone
 
 <div align="center">
 
@@ -89,7 +89,10 @@ This project demonstrates strong understanding of:
 
 | Home Page | Tweet Modal | Profile Page |
 |:---------:|:-----------:|:------------:|
-| ![Home](https://via.placeholder.com/300x200?text=Home+Page) | ![Modal](https://via.placeholder.com/300x200?text=Tweet+Modal) | ![Profile](https://via.placeholder.com/300x200?text=Profile+Page) |
+| ![Home](<img width="1440" height="900" alt="Screenshot 2026-02-25 at 10 10 48 PM" src="https://github.com/user-attachments/assets/609adeb3-fb7e-4c72-ba21-68ecfec20204" />
+) | ![Modal](<img width="1440" height="900" alt="Screenshot 2026-02-25 at 10 12 24 PM" src="https://github.com/user-attachments/assets/fb738036-b830-42bc-8cb1-69a1ae45d5d6" />
+) | ![Profile](<img width="1440" height="900" alt="Screenshot 2026-02-25 at 10 12 02 PM" src="https://github.com/user-attachments/assets/9a5f6ea8-dbc7-422b-ae47-7c9d18cb1fc3" />
+) |
 
 ---
 
@@ -189,22 +192,31 @@ http://127.0.0.1:8000
 
 ```
 socialnest/
-│
 ├── tweet/
 │   ├── migrations/
 │   ├── templates/
+│   │   ├── layout.html
+│   │   ├── tweet_list.html
+│   │   ├── user_profile.html
+│   │   ├── profile.html
+│   │   └── tweet_form.html
+│   ├── __init__.py
 │   ├── admin.py
+│   ├── apps.py
 │   ├── forms.py
 │   ├── models.py
+│   ├── tests.py
 │   ├── urls.py
 │   └── views.py
-│
 ├── media/
+│   ├── photos/
+│   └── profile/
 ├── SocialNest/
+│   ├── __init__.py
+│   ├── asgi.py
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
-│
 ├── manage.py
 └── README.md
 ```
